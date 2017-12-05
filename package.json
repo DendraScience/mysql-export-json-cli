@@ -1,0 +1,71 @@
+{
+  "name": "@dendra-science/mysql-export-json-cli",
+  "version": "1.0.0",
+  "description": "MySQL Export JSON command line interface tool.",
+  "license": "BSD-2-Clause-FreeBSD",
+  "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",
+  "bin": {
+    "mysql-export-json": "./dist/mysql-export-json.js"
+  },
+  "main": "dist/mysql-export-json.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DendraScience/mysql-export-json-cli.git"
+  },
+  "scripts": {
+    "babel": "babel src -d dist",
+    "build": "npm run lint && npm run clean && npm run babel",
+    "clean": "rm -rf dist/*",
+    "lint": "eslint src",
+    "lint-test": "eslint test",
+    "pkg": "npm run pkg-output && npm run pkg-archive",
+    "pkg-archive": "npm run pkg-archive-linux-x64 && npm run pkg-archive-linux-x86 && npm run pkg-archive-macos-x64 && npm run pkg-archive-win-x64",
+    "pkg-archive-linux-x64": "mkdir -p pkg_archive && cp pkg_output/mysql-export-json-cli-linux-x64 pkg_archive/mysql-export-json && zip -Djm pkg_archive/mysql-export-json-cli-linux-x64.zip pkg_archive/mysql-export-json",
+    "pkg-archive-linux-x86": "mkdir -p pkg_archive && cp pkg_output/mysql-export-json-cli-linux-x86 pkg_archive/mysql-export-json && zip -Djm pkg_archive/mysql-export-json-cli-linux-x86.zip pkg_archive/mysql-export-json",
+    "pkg-archive-macos-x64": "mkdir -p pkg_archive && cp pkg_output/mysql-export-json-cli-macos-x64 pkg_archive/mysql-export-json && zip -Djm pkg_archive/mysql-export-json-cli-macos-x64.zip pkg_archive/mysql-export-json",
+    "pkg-archive-win-x64": "mkdir -p pkg_archive && cp pkg_output/mysql-export-json-cli-win-x64.exe pkg_archive/mysql-export-json.exe && zip -Djm pkg_archive/mysql-export-json-cli-win-x64.zip pkg_archive/mysql-export-json.exe",
+    "pkg-output": "pkg . --out-path ./pkg_output --targets node8-linux-x64,node8-linux-x86,node8-macos-x64,node8-win-x64",
+    "start": "node ./dist/mysql-export-json.js",
+    "start:dev": "NODE_ENV=development npm start",
+    "start:prod": "NODE_ENV=production npm start",
+    "test": "npm run lint-test && NODE_ENV=test mocha test --recursive --use_strict",
+    "test:build": "npm run build && npm run test",
+    "test:watch": "chokidar --initial 'src/**/*.js' 'test/**/*.js' -c 'npm run test:build'"
+  },
+  "engines": {
+    "node": ">=8.7.0"
+  },
+  "dependencies": {
+    "@dendra-science/mysql-export-json": "0.0.2",
+    "@dendra-science/task-command": "0.0.1",
+    "chalk": "^2.3.0",
+    "check-types": "^7.3.0",
+    "jsome": "^2.3.26",
+    "mri": "^1.1.0",
+    "mysql": "^2.15.0",
+    "ora": "^1.3.0",
+    "string-length": "^2.0.0",
+    "table": "^4.0.2",
+    "write-json-file": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "chai": "^4.1.2",
+    "eslint": "^4.12.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "mocha": "^4.0.1"
+  },
+  "optionalDependencies": {
+    "fsevents": "^1.1.2"
+  },
+  "pkg": {
+    "scripts": "./dist/**/*.js",
+    "assets": "./config/*.json"
+  }
+}
