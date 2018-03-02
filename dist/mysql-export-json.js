@@ -37,7 +37,7 @@ require('./app')(log).then(app => {
       dry_run: 'dry-run'
     },
     boolean: ['dry_run', 'verbose'],
-    string: ['filepat', 'output']
+    string: ['filepat', 'merge', 'output']
   });
 
   return app.command.eval(parsed);

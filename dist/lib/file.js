@@ -9,9 +9,23 @@
  */
 
 const path = require('path');
+const loadJsonFile = require('load-json-file');
 const writeJsonFile = require('write-json-file');
 
-function saveJson(data, p, defaults, override) {
+function loadJson(p, defaults, override) {
+  const opts = Object.assign({}, defaults, p, override);
+
+  if (opts.file) {
+    const fp = path.resolve(process.cwd(), opts.file);
+    return loadJsonFile(fp);
+  }
+
+  return Promise.reject(new Error('Required: file'));
+}
+
+exports.loadJson = loadJson;
+
+function saveJson(data, p, defaults, override, { text }) {
   const opts = Object.assign({}, defaults, p, override);
 
   if (opts.save && opts.file) {
@@ -20,7 +34,7 @@ function saveJson(data, p, defaults, override) {
 
     const fp = path.resolve(process.cwd(), opts.file);
     return writeJsonFile(fp, data, writeOpts).then(() => {
-      return [[{ text: 'Saved', tail: ':' }, opts.file]];
+      return [[{ text: text || 'Saved', tail: ':' }, opts.file]];
     });
   } else if (opts.save && !opts.file) {
     return Promise.reject(new Error('Required: file'));

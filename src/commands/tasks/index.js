@@ -22,7 +22,7 @@ module.exports = (ctx) => {
         synopsis: [
           {cmd: '<command>', opts: '[<options>] [<args>]'},
           {},
-          {cmd: 'multi', opts: '--filetmpl=<filetmpl> --conn:<connectOption>[=<val>] ... (--exp:sqlString=<str> | --exp:tableName=<name>) [--exp:<exportOption>[=<val>] ...]'},
+          {cmd: 'multi', opts: '--filetmpl=<filetmpl> [--merge=ltr|rtl] --conn:<connectOption>[=<val>] ... (--exp:sqlString=<str> | --exp:tableName=<name>) [--exp:<exportOption>[=<val>] ...]'},
           {cmd: 'ping', opts: '--conn:<connectOption>[=<val>] ...'}
         ],
         groups: [{
@@ -54,7 +54,8 @@ module.exports = (ctx) => {
         }, {
           header: 'Multi Options',
           items: [
-            {opts: '--filetmpl=<filetmpl>', desc: 'Template string for naming JSON files (URI encoded), e.g. "{_id}.station.json"'}
+            {opts: '--filetmpl=<filetmpl>', desc: 'Template string for naming JSON files (URI encoded), e.g. "{_id}.station.json"'},
+            {opts: '--merge=<direction>', desc: 'Merge exported rows with existing files (top-level fields only)'}
           ]
         }, {
           header: 'Commands',

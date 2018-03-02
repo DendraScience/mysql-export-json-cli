@@ -41,6 +41,7 @@ require('./app')(log).then(app => {
     ],
     string: [
       'filepat',
+      'merge',
       'output'
     ]
   })

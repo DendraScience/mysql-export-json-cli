@@ -7,6 +7,48 @@ const { Writable } = require('stream');
 
 const TOKEN_REGEX = /{([.\w]+)}/g;
 
+async function exportData(dataLeft, fn, { file, output, p }) {
+  let dataRight;
+
+  if (p.merge) {
+    try {
+      dataRight = await file.loadJson({
+        file: fn
+      });
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw e;
+    }
+  }
+
+  if (p.dry_run) {
+    if (dataRight) {
+      output.push([{ text: 'Will merge', tail: ':' }, fn]);
+    } else {
+      output.push([{ text: 'Will save', tail: ':' }, fn]);
+    }
+  } else {
+    let data = dataLeft;
+    let didMerge;
+
+    if (!dataRight) {} else if (p.merge === 'ltr') {
+      data = Object.assign({}, dataRight, dataLeft);
+      didMerge = true;
+    } else if (p.merge === 'rtl') {
+      data = Object.assign({}, dataLeft, dataRight);
+      didMerge = true;
+    }
+
+    const out = await file.saveJson(data, p, null, {
+      file: fn,
+      save: true
+    }, {
+      text: didMerge && 'Merged'
+    });
+
+    if (p.verbose && Array.isArray(out)) output.push(...out);
+  }
+}
+
 module.exports = ({ check, file, mysql, parse, style, utils }) => {
   return {
     check(p) {
@@ -45,18 +87,7 @@ module.exports = ({ check, file, mysql, parse, style, utils }) => {
           count++;
           spinner.text = `Exporting file: ${fn}`;
 
-          if (p.dry_run) {
-            output.push([{ text: 'Will save', tail: ':' }, fn]);
-            callback();
-          } else {
-            file.saveJson(data, p, null, {
-              file: fn,
-              save: true
-            }).then(out => {
-              if (p.verbose && Array.isArray(out)) output.push(...out);
-              callback();
-            }).catch(err => callback(err));
-          }
+          exportData(data, fn, { file, output, p }).then(() => callback()).catch(err => callback(err));
         }
       });
 
